@@ -1,4 +1,6 @@
-// adapted with modifications from: https://github.com/farski/http-headers-crx/blob/main/page_action/popup.js
+'use strict'
+
+// code adapted from: https://github.com/farski/http-headers-crx/blob/main/page_action/popup.js
 
 // Copyright (c) original code: 2016 Christopher Kalafarski.
 // Copyright (c) modified code: 2023 David Will
@@ -21,18 +23,26 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+document.addEventListener('DOMContentLoaded', () => {
+    const button = document.querySelector('#copy-headers-btn');
+    button.addEventListener('click', handleClick)
+});
 
-'use strict'
-
-document.addEventListener('DOMContentLoaded', handleContentLoaded);
-
-async function handleContentLoaded() {
+async function handleClick() {
     const records = await getRecords()
-    const headers = records
+
+    if (!records) {
+        console.log("No headers present for current tab.")
+        window.close();
+        return 
+    }
+    
+    const headers = JSON.parse(records)
         .map(parseHeaders)
         .reduce((acc, curr) => ({ ...acc, ...curr}))
 
-    copyToClipboard(headers)
+    copyToClipboard(headers);
+    window.close();
 }
 
 async function getRecords() {
@@ -40,8 +50,7 @@ async function getRecords() {
     const tab = tabs[0];
     
     const result = await chrome.storage.local.get([`${tab.id}`])
-    const json = result[`${tab.id}`];
-    return JSON.parse(json);
+    return result[`${tab.id}`];
 }
 
 function parseHeaders(records) {
@@ -67,5 +76,3 @@ function copyToClipboard(headers) {
 
     document.body.removeChild(textArea)
 }
-
-// do I need a cleanup fn?

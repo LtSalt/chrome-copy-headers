@@ -12,7 +12,11 @@
         "service_worker": "scripts/background.js"
     },
     "action": {
-        "default_popup": "copy.html",
-        "default_icon": "icons/clipboard-19.png"
+        "default_popup": "popup.html",
+        "default_icon": "icons/copy-16.png",
+        "16": "icons/copy-16.png",
+        "32": "icons/copy-32.png",
+        "48": "icons/copy-48.png",
+        "128": "icons/copy-128.png"
     }
 }
